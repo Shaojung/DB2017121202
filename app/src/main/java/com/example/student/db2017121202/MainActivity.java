@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MyTask task = new MyTask();
+        task.execute("http://img1.gtimg.com/dajia/pics/hv1/148/163/2231/145112488.jpg");
     }
     class MyTask extends AsyncTask<String, Integer, Bitmap> {
 
@@ -61,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            ImageView img = (ImageView) findViewById(R.id.imageView);
+            img.setImageBitmap(bitmap);
         }
     }
 }
