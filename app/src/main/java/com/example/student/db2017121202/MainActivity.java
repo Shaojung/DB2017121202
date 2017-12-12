@@ -1,11 +1,13 @@
 package com.example.student.db2017121202;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -25,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Bitmap doInBackground(String... strings) {
             URL url = null;
-
+            int len;
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
             try {
                 // create the HttpURLConnection
                 url = new URL(strings[0]);
@@ -42,8 +46,13 @@ public class MainActivity extends AppCompatActivity {
                 connection.connect();
                 InputStream is = connection.getInputStream();
                 // 伺服器回來的參數
-
-
+                while ((len = is.read(buffer)) != -1)
+                {
+                    output.write(buffer, 0, len);
+                }
+                byte[] result = output.toByteArray();
+                Bitmap bm = BitmapFactory.decodeByteArray(result, 0, result.length);
+                return bm;
             } catch (ProtocolException e) {
                 e.printStackTrace();
             } catch (MalformedURLException e) {
