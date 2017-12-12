@@ -7,6 +7,7 @@ import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,11 +18,12 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-
+    TextView tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tv = (TextView) findViewById(R.id.textView);
         MyTask task = new MyTask();
         task.execute("http://img1.gtimg.com/dajia/pics/hv1/148/163/2231/145112488.jpg");
     }
@@ -47,10 +49,14 @@ public class MainActivity extends AppCompatActivity {
                 // 設定TimeOut時間
                 connection.setReadTimeout(15 * 1000);
                 connection.connect();
+                int totalLength = connection.getContentLength();
+                int sum = 0;
                 InputStream is = connection.getInputStream();
                 // 伺服器回來的參數
                 while ((len = is.read(buffer)) != -1)
                 {
+                    sum += len;
+                    publishProgress(100 * sum / totalLength);
                     output.write(buffer, 0, len);
                 }
                 byte[] result = output.toByteArray();
@@ -64,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            tv.setText(String.valueOf(values[0]));
         }
 
         @Override
